@@ -3,12 +3,16 @@
 ## Description
 For this challenge, you will be implementing an API for an elevator with JavaScript. While the challenge might seem trivial, you will quickly find out all the nuances of the elevator world and be marveled that they work as well as they do. You cannot move on to the next Level unless you have completed the current Level (or made a valiant effort).
 
-We will focus heavily on TDD and writing super clean code. We will be considering the following criteria:
+We will focus heavily on **TDD** and writing super clean code. We will be considering the following criteria:
 
 * Code Quality
 * Robustness of test suite
 * Efficiency of elevator algorithm
 * Number of Levels completed
+
+When you start a new level, read through the level's specification and write failing (red) tests to satisfy the spec. Then write your implementation code to make the tests pass (green).
+
+Clone this repository and run `npm install` to install testing dependencies.
 
 ### Level 0
 Sketch out the elevator process on pencil and paper. What kinds of things do you need to keep track of? What is a modern elevator's pickup and drop off strategy?
