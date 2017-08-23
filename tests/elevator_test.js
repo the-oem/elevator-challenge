@@ -8,7 +8,7 @@ const Elevator = require('../elevator').default;
 describe('Elevator', function() {
   let elevator = new Elevator();
 
-  afterEach(function() {
+  beforeEach(function() {
     elevator.reset();
   });
 
@@ -17,8 +17,6 @@ describe('Elevator', function() {
     elevator.goToFloor(mockUser);
 
     assert.equal(elevator.currentFloor, 5);
-    assert.equal(elevator.motionStatus, 'idle');
-    assert.deepEqual(elevator.getStops(), [2, 5]);
   });
 
   it('should bring a rider to a floor below their current floor', () => {
@@ -26,7 +24,5 @@ describe('Elevator', function() {
     elevator.goToFloor(mockUser);
 
     assert.equal(elevator.currentFloor, 3);
-    assert.equal(elevator.motionStatus, 'idle');
-    assert.deepEqual(elevator.getStops(), [8, 3]);
   });
 });
