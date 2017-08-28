@@ -27,6 +27,28 @@ describe('Elevator', () => {
     elevator.reset();
   });
 
+  it('should have default properties', () => {
+    assert.equal(elevator.currentFloor, 0);
+    assert.equal(elevator.currentRiders.length, 0);
+    assert.equal(elevator.currentRequests.length, 0);
+    assert.equal(elevator.travelDirection, 'up');
+    assert.equal(elevator.floorsTraversed, 0);
+  });
+
+  it('should be able to be reset', () => {
+    elevator.currentFloor = 8;
+    elevator.currentRiders.push({});
+    elevator.currentRequests.push(3);
+    elevator.travelDirection = 'down';
+    elevator.floorsTraversed = 12;
+    elevator.reset();
+    assert.equal(elevator.currentFloor, 0);
+    assert.equal(elevator.currentRiders.length, 0);
+    assert.equal(elevator.currentRequests.length, 0);
+    assert.equal(elevator.travelDirection, 'up');
+    assert.equal(elevator.floorsTraversed, 0);
+  });
+
   describe('Level 1 - Level 2', () => {
     it('should bring a rider to a floor above their current floor', () => {
       const mockUser = new Person({ name: 'Brittany', currentFloor: 2, dropOffFloor: 5 });
