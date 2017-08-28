@@ -68,19 +68,63 @@ describe('Elevator', () => {
     assert.equal(elevator.totalStopsMade, 2);
   });
 
-  describe('Level 1 - Level 2', () => {
+  it('should track its direction', () => {
+    assert.equal(elevator.travelDirection, 'up');
+    elevator.updateDirection(5, 2);
+    assert.equal(elevator.travelDirection, 'down');
+    elevator.updateDirection(2, 10);
+    assert.equal(elevator.travelDirection, 'up');
+  });
+
+  it('should track its requests', () => {
+    assert.equal(elevator.currentRequests.length, 0);
+    elevator.riderRequest(new Person({ name: 'Brittany', currentFloor: 2, dropOffFloor: 5 }));
+    assert.equal(elevator.currentRequests.length, 1);
+    elevator.riderRequest(new Person({ name: 'Robbie', currentFloor: 4, dropOffFloor: 10 }));
+    assert.equal(elevator.currentRequests.length, 2);
+  });
+
+  describe('Level 1 - Level 3', () => {
     it('should bring a rider to a floor above their current floor', () => {
-      const mockUser = new Person({ name: 'Brittany', currentFloor: 2, dropOffFloor: 5 });
-      elevator.goToFloor(mockUser);
+      const mockPerson = new Person({ name: 'Brittany', currentFloor: 2, dropOffFloor: 5 });
+
+      elevator.riderRequest(mockPerson);
+      elevator.processRequests();
+
       assert.equal(elevator.currentFloor, 5);
-      assert.equal(elevator.floorsTraversed, 3);
+      assert.equal(elevator.floorsTraversed, 5);
     });
 
     it('should bring a rider to a floor below their current floor', () => {
-      const mockUser = new Person({ name: 'Brittany', currentFloor: 8, dropOffFloor: 3 });
-      elevator.goToFloor(mockUser);
+      const mockPerson = new Person({ name: 'Brittany', currentFloor: 8, dropOffFloor: 3 });
+
+      elevator.riderRequest(mockPerson);
+      elevator.processRequests();
+
       assert.equal(elevator.currentFloor, 3);
-      assert.equal(elevator.floorsTraversed, 5);
+      assert.equal(elevator.floorsTraversed, 13);
+    });
+  });
+
+  describe('Level 4', () => {
+    it('should pick up Bob and deliver him, then pick up Sue and deliver her', () => {
+      const mockPerson1 = new Person({ name: 'Bob', currentFloor: 3, dropOffFloor: 2 });
+      const mockPerson2 = new Person({ name: 'Sue', currentFloor: 6, dropOffFloor: 5 });
+
+      elevator.riderRequest(mockPerson1);
+      elevator.riderRequest(mockPerson2);
+
+      assert.equal(elevator.currentRequests.length, 2);
+      assert.equal(elevator.currentFloor, 0);
+
+      elevator.processRequests();
+
+      assert.equal(elevator.currentRiders.length, 0);
+      assert.equal(elevator.currentRequests.length, 0);
+      assert.equal(elevator.currentFloor, 5);
+      assert.equal(elevator.totalStopsMade, 2);
+      assert.equal(elevator.travelDirection, 'down');
+      assert.equal(elevator.floorsTraversed, 9);
     });
   });
 });
