@@ -6,6 +6,7 @@ export default class Elevator {
     this.travelDirection = 'up';
     this.floorsTraversed = 0;
     this.totalStopsMade = 0;
+    this.totalRequestsProcessed = 0;
   }
 
   reset() {
@@ -15,6 +16,7 @@ export default class Elevator {
     this.travelDirection = 'up';
     this.floorsTraversed = 0;
     this.totalStopsMade = 0;
+    this.totalRequestsProcessed = 0;
   }
 
   riderRequest(person) {
@@ -27,13 +29,15 @@ export default class Elevator {
 
   goToFloor(person) {
     this.updateFloorsTraversed(this.currentFloor, person.currentFloor);
+    this.updateStopsMade();
     this.currentRiders.push(person);
     this.currentRequests = this.currentRequests.filter(rider => rider.name !== person.name);
     this.currentFloor = person.dropOffFloor;
+    this.currentRiders = this.currentRiders.filter(rider => rider.name !== person.name);
     this.updateFloorsTraversed(person.currentFloor, person.dropOffFloor);
     this.updateDirection(person.currentFloor, person.dropOffFloor);
     this.updateStopsMade();
-    this.currentRiders = this.currentRiders.filter(rider => rider.name !== person.name);
+    this.updateRequestsProcessed();
   }
 
   updateFloorsTraversed(start, end) {
@@ -46,5 +50,10 @@ export default class Elevator {
 
   updateDirection(start, end) {
     this.travelDirection = start > end ? 'down' : 'up';
+    if (this.currentFloor === 0) this.travelDirection = 'up';
+  }
+
+  updateRequestsProcessed() {
+    this.totalRequestsProcessed += 1;
   }
 }

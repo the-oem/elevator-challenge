@@ -34,6 +34,7 @@ describe('Elevator', () => {
     assert.equal(elevator.travelDirection, 'up');
     assert.equal(elevator.floorsTraversed, 0);
     assert.equal(elevator.totalStopsMade, 0);
+    assert.equal(elevator.totalRequestsProcessed, 0);
   });
 
   it('should be able to be reset', () => {
@@ -43,6 +44,7 @@ describe('Elevator', () => {
     elevator.travelDirection = 'down';
     elevator.floorsTraversed = 12;
     elevator.totalStopsMade = 24;
+    elevator.totalRequestsProcessed = 18;
     elevator.reset();
     assert.equal(elevator.currentFloor, 0);
     assert.equal(elevator.currentRiders.length, 0);
@@ -50,6 +52,7 @@ describe('Elevator', () => {
     assert.equal(elevator.travelDirection, 'up');
     assert.equal(elevator.floorsTraversed, 0);
     assert.equal(elevator.totalStopsMade, 0);
+    assert.equal(elevator.totalRequestsProcessed, 0);
   });
 
   it('should update floors traversed', () => {
@@ -70,9 +73,14 @@ describe('Elevator', () => {
 
   it('should track its direction', () => {
     assert.equal(elevator.travelDirection, 'up');
+    elevator.currentFloor = 2;
     elevator.updateDirection(5, 2);
     assert.equal(elevator.travelDirection, 'down');
+    elevator.currentFloor = 10;
     elevator.updateDirection(2, 10);
+    assert.equal(elevator.travelDirection, 'up');
+    elevator.currentFloor = 0;
+    elevator.updateDirection(10, 0);
     assert.equal(elevator.travelDirection, 'up');
   });
 
@@ -82,6 +90,14 @@ describe('Elevator', () => {
     assert.equal(elevator.currentRequests.length, 1);
     elevator.riderRequest(new Person({ name: 'Robbie', currentFloor: 4, dropOffFloor: 10 }));
     assert.equal(elevator.currentRequests.length, 2);
+  });
+
+  it('should update the total requests its processed', () => {
+    assert.equal(elevator.totalRequestsProcessed, 0);
+    elevator.updateRequestsProcessed();
+    assert.equal(elevator.totalRequestsProcessed, 1);
+    elevator.updateRequestsProcessed();
+    assert.equal(elevator.totalRequestsProcessed, 2);
   });
 
   describe('Level 1 - Level 3', () => {
@@ -122,9 +138,95 @@ describe('Elevator', () => {
       assert.equal(elevator.currentRiders.length, 0);
       assert.equal(elevator.currentRequests.length, 0);
       assert.equal(elevator.currentFloor, 5);
-      assert.equal(elevator.totalStopsMade, 2);
+      assert.equal(elevator.totalStopsMade, 4);
       assert.equal(elevator.travelDirection, 'down');
       assert.equal(elevator.floorsTraversed, 9);
+    });
+  });
+
+  describe('Level 5', () => {
+    it('should process person A going up and person B going up', () => {
+      const mockPerson1 = new Person({ name: 'Bob', currentFloor: 3, dropOffFloor: 6 });
+      const mockPerson2 = new Person({ name: 'Sue', currentFloor: 2, dropOffFloor: 10 });
+
+      elevator.riderRequest(mockPerson1);
+      elevator.riderRequest(mockPerson2);
+
+      assert.equal(elevator.currentRequests.length, 2);
+      assert.equal(elevator.currentFloor, 0);
+
+      elevator.processRequests();
+
+      assert.equal(elevator.currentRiders.length, 0);
+      assert.equal(elevator.currentRequests.length, 0);
+      assert.equal(elevator.currentFloor, 10);
+      assert.equal(elevator.totalStopsMade, 4);
+      assert.equal(elevator.travelDirection, 'up');
+      assert.equal(elevator.floorsTraversed, 18);
+      assert.equal(elevator.totalRequestsProcessed, 2);
+    });
+
+    it('should process person A going up and person B going down', () => {
+      const mockPerson1 = new Person({ name: 'Bob', currentFloor: 1, dropOffFloor: 6 });
+      const mockPerson2 = new Person({ name: 'Sue', currentFloor: 7, dropOffFloor: 5 });
+
+      elevator.riderRequest(mockPerson1);
+      elevator.riderRequest(mockPerson2);
+
+      assert.equal(elevator.currentRequests.length, 2);
+      assert.equal(elevator.currentFloor, 0);
+
+      elevator.processRequests();
+
+      assert.equal(elevator.currentRiders.length, 0);
+      assert.equal(elevator.currentRequests.length, 0);
+      assert.equal(elevator.currentFloor, 5);
+      assert.equal(elevator.totalStopsMade, 4);
+      assert.equal(elevator.travelDirection, 'down');
+      assert.equal(elevator.floorsTraversed, 9);
+      assert.equal(elevator.totalRequestsProcessed, 2);
+    });
+
+    it('should process person A going down and person B going up', () => {
+      const mockPerson1 = new Person({ name: 'Bob', currentFloor: 7, dropOffFloor: 2 });
+      const mockPerson2 = new Person({ name: 'Sue', currentFloor: 6, dropOffFloor: 11 });
+
+      elevator.riderRequest(mockPerson1);
+      elevator.riderRequest(mockPerson2);
+
+      assert.equal(elevator.currentRequests.length, 2);
+      assert.equal(elevator.currentFloor, 0);
+
+      elevator.processRequests();
+
+      assert.equal(elevator.currentRiders.length, 0);
+      assert.equal(elevator.currentRequests.length, 0);
+      assert.equal(elevator.currentFloor, 11);
+      assert.equal(elevator.totalStopsMade, 4);
+      assert.equal(elevator.travelDirection, 'up');
+      assert.equal(elevator.floorsTraversed, 21);
+      assert.equal(elevator.totalRequestsProcessed, 2);
+    });
+
+    it('should process person A going down and person B going down', () => {
+      const mockPerson1 = new Person({ name: 'Bob', currentFloor: 10, dropOffFloor: 2 });
+      const mockPerson2 = new Person({ name: 'Sue', currentFloor: 6, dropOffFloor: 5 });
+
+      elevator.riderRequest(mockPerson1);
+      elevator.riderRequest(mockPerson2);
+
+      assert.equal(elevator.currentRequests.length, 2);
+      assert.equal(elevator.currentFloor, 0);
+
+      elevator.processRequests();
+
+      assert.equal(elevator.currentRiders.length, 0);
+      assert.equal(elevator.currentRequests.length, 0);
+      assert.equal(elevator.currentFloor, 5);
+      assert.equal(elevator.totalStopsMade, 4);
+      assert.equal(elevator.travelDirection, 'down');
+      assert.equal(elevator.floorsTraversed, 23);
+      assert.equal(elevator.totalRequestsProcessed, 2);
     });
   });
 });
