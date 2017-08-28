@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 export default class Elevator {
   constructor() {
     this.currentFloor = 0;
@@ -7,6 +9,7 @@ export default class Elevator {
     this.floorsTraversed = 0;
     this.totalStopsMade = 0;
     this.totalRequestsProcessed = 0;
+    this.currentHour = Date.now();
   }
 
   reset() {
@@ -17,6 +20,7 @@ export default class Elevator {
     this.floorsTraversed = 0;
     this.totalStopsMade = 0;
     this.totalRequestsProcessed = 0;
+    this.currentHour = Date.now();
   }
 
   riderRequest(person) {
@@ -38,6 +42,16 @@ export default class Elevator {
     this.updateDirection(person.currentFloor, person.dropOffFloor);
     this.updateStopsMade();
     this.updateRequestsProcessed();
+    // this.processEnd();
+  }
+
+  processEnd() {
+    if (moment(this.currentTime).hour() < 12) {
+      if (!this.currentRequests.length && !this.currentRiders.length) {
+        this.updateFloorsTraversed(this.currentFloor, 0);
+        this.currentFloor = 0;
+      }
+    }
   }
 
   updateFloorsTraversed(start, end) {

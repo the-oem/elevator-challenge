@@ -10,6 +10,7 @@ require('babel-core/register')({
 const assert = require('chai').assert;
 const Elevator = require('../elevator').default;
 const Person = require('../person').default;
+const moment = require('moment');
 
 describe('Person', () => {
   it('should have initial properties when created', () => {
@@ -227,6 +228,18 @@ describe('Elevator', () => {
       assert.equal(elevator.travelDirection, 'down');
       assert.equal(elevator.floorsTraversed, 23);
       assert.equal(elevator.totalRequestsProcessed, 2);
+    });
+  });
+
+  describe('Level 6', () => {
+    it.skip('should return to the lobby (floor 0) if no riders and time < 12:00pm', () => {
+      const mockPerson1 = new Person({ name: 'Bob', currentFloor: 3, dropOffFloor: 10 });
+      const currentTime = moment(Date.now()).hour(13);
+      console.log(currentTime);
+    });
+
+    it.skip('should stay on current floor if no riders and time > 12:00pm', () => {
+      const mockPerson1 = new Person({ name: 'Bob', currentFloor: 10, dropOffFloor: 2 });
     });
   });
 });
